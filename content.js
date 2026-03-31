@@ -324,23 +324,25 @@ class FormFillAssistant {
   _showOnboarding() {
     this._setBodyContent(c => {
       this._showSearchBar(false);
-      this._setStatus('欢迎使用网申助手');
+      this._setStatus('咕~ 终末地企业管理员就位！');
       const w = document.createElement('div'); w.className = 'ffa-onboard';
 
-      const urlTitle = el('p', 'ffa-onboard-title', '🌐 从网页自动获取');
-      const urlDesc  = el('p', 'ffa-onboard-desc',  '输入你的个人主页或在线简历地址');
+      const greeting = el('p', 'ffa-onboard-desc', '咕咕嘎嘎！本管理员奉命协助您完成网申任务，请按指示操作，不得拖延！');
+
+      const urlTitle = el('p', 'ffa-onboard-title', '🌐 数据同步（推荐）');
+      const urlDesc  = el('p', 'ffa-onboard-desc',  '将您的个人主页或在线简历地址上报给本管理员');
       const urlInput = document.createElement('input');
       urlInput.type = 'url'; urlInput.className = 'ffa-form-input'; urlInput.placeholder = 'https://yourname.github.io';
 
-      const fetchBtn = el('button', 'ffa-form-save ffa-block-btn', '获取数据');
+      const fetchBtn = el('button', 'ffa-form-save ffa-block-btn', '📋 即刻同步，咕！');
       fetchBtn.addEventListener('click', async () => {
         const url = urlInput.value.trim(); if (!url.startsWith('http')) { urlInput.focus(); return; }
         await this._saveSettings({ sourceUrl: url }); this._renderButtons(); await this._fetchAndApply(url);
       });
       urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') fetchBtn.click(); });
 
-      const divider  = el('div', 'ffa-onboard-divider', '— 或 —');
-      const manualBtn = el('button', 'ffa-onboard-manual-btn', '✏️  手动录入数据');
+      const divider  = el('div', 'ffa-onboard-divider', '— 咕咕嘎嘎 —');
+      const manualBtn = el('button', 'ffa-onboard-manual-btn', '✏️  手动上报数据');
       manualBtn.addEventListener('click', async () => {
         await this._saveSettings({ sourceUrl: null });
         this.profile = { name: '我', orderedData: [], fetchedAt: Date.now(), modified: false };
@@ -348,7 +350,7 @@ class FormFillAssistant {
         this.editMode = false; this._renderButtons(); this._toggleEditMode();
       });
 
-      w.append(urlTitle, urlDesc, urlInput, fetchBtn, divider, manualBtn);
+      w.append(greeting, urlTitle, urlDesc, urlInput, fetchBtn, divider, manualBtn);
       c.appendChild(w); setTimeout(() => urlInput.focus(), 100);
     });
   }
