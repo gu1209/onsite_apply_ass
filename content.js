@@ -189,7 +189,7 @@ class FormFillAssistant {
     const header = document.createElement('div');
     header.className = 'ffa-header';
     const logo = document.createElement('img');
-    logo.className = 'ffa-logo'; logo.src = chrome.runtime.getURL('images/logo.png'); logo.alt = '网申助手';
+    logo.className = 'ffa-logo'; logo.src = chrome.runtime.getURL('images/logo.jpg'); logo.alt = '网申助手';
     logo.addEventListener('click', () => new Audio(chrome.runtime.getURL('audio/1.mp3')).play().catch(() => {}));
 
     const statusBar = document.createElement('div');
