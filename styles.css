@@ -1,0 +1,656 @@
+/* 网申助手 — styles.css */
+
+/* ── 侧边栏 ───────────────────────────────────────────────── */
+
+#ffa-sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  right: -300px !important;
+  width: 280px !important;
+  height: 100vh !important;
+  background: #edf7f2 !important;
+  background-image: url('chrome-extension://__MSG_@@extension_id__/images/background.png') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  box-shadow: -3px 0 24px rgba(0, 0, 0, 0.14) !important;
+  z-index: 2147483646 !important;
+  transition: right 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
+}
+
+#ffa-sidebar.ffa-open {
+  right: 0 !important;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+
+.ffa-header {
+  padding: 12px 16px 6px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+}
+
+.ffa-logo {
+  width: 100% !important;
+  max-height: 90px !important;
+  object-fit: contain !important;
+  cursor: pointer !important;
+  transition: opacity 0.15s !important;
+}
+
+.ffa-logo:hover { opacity: 0.85 !important; }
+
+/* ── 状态栏 ───────────────────────────────────────────────── */
+
+.ffa-status-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 4px 4px 0 !important;
+  gap: 6px !important;
+}
+
+#ffa-status-text {
+  font-size: 11px !important;
+  color: #72a98a !important;
+  flex: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.ffa-refresh-btn {
+  background: none !important;
+  border: 1px solid #a8ccbc !important;
+  border-radius: 50% !important;
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 14px !important;
+  color: #2f9e6f !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: background 0.15s !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+}
+
+.ffa-refresh-btn:hover {
+  background: rgba(47,158,111,0.12) !important;
+}
+
+@keyframes ffa-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ffa-refresh-btn.ffa-spinning {
+  animation: ffa-spin 0.8s linear infinite !important;
+}
+
+/* ── Body ─────────────────────────────────────────────────── */
+
+.ffa-body {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 8px 14px 48px !important;
+}
+
+.ffa-body::-webkit-scrollbar {
+  width: 5px !important;
+}
+.ffa-body::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+.ffa-body::-webkit-scrollbar-thumb {
+  background: #a8ccbc !important;
+  border-radius: 3px !important;
+}
+
+
+/* ── 空状态 ───────────────────────────────────────────────── */
+
+.ffa-empty {
+  text-align: center !important;
+  color: #88b89c !important;
+  font-size: 13px !important;
+  font-style: italic !important;
+  padding: 30px 0 !important;
+  margin: 0 !important;
+}
+
+/* ── 按钮分组 ─────────────────────────────────────────────── */
+
+.ffa-group {
+  margin-bottom: 12px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+}
+
+.ffa-group-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #1a5c3a !important;
+  margin-bottom: 9px !important;
+  padding-bottom: 6px !important;
+  border-bottom: 1px solid rgba(47, 158, 111, 0.22) !important;
+}
+
+.ffa-group-btns {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+}
+
+/* ── 填写按钮 ─────────────────────────────────────────────── */
+
+.ffa-btn {
+  background: #ffffff !important;
+  color: #1a3a28 !important;
+  border: 1.5px solid #c0d8cc !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s !important;
+  max-width: 100% !important;
+  word-break: break-all !important;
+  font-family: inherit !important;
+}
+
+.ffa-btn:hover {
+  background: #e4f5ec !important;
+  border-color: #2f9e6f !important;
+  transform: translateY(-1px) !important;
+}
+
+.ffa-btn:active {
+  transform: translateY(0) !important;
+}
+
+.ffa-btn:focus {
+  outline: none !important;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+
+.ffa-footer {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: rgba(47,158,111,0.9) !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  padding: 7px !important;
+  letter-spacing: 0.2px !important;
+  font-weight: 500 !important;
+}
+
+/* ── 浮动按钮 ─────────────────────────────────────────────── */
+
+#ffa-toggle {
+  position: fixed !important;
+  right: 20px !important;
+  top: 20px !important;
+  background: linear-gradient(135deg, #2f9e6f, #1a6b4a) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 8px 15px !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 14px rgba(47, 158, 111, 0.48) !important;
+  z-index: 2147483647 !important;
+  white-space: nowrap !important;
+  user-select: none !important;
+  transition: box-shadow 0.2s !important;
+  font-family: 'Segoe UI', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
+}
+
+#ffa-toggle:hover {
+  box-shadow: 0 6px 20px rgba(47, 158, 111, 0.62) !important;
+}
+
+#ffa-toggle:active {
+  box-shadow: 0 2px 8px rgba(47, 158, 111, 0.4) !important;
+}
+
+#ffa-toggle:focus {
+  outline: none !important;
+}
+
+/* ── Toast ───────────────────────────────────────────────── */
+
+#ffa-toast {
+  position: fixed !important;
+  bottom: 80px !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(8px) !important;
+  background: rgba(20, 60, 38, 0.92) !important;
+  color: #ffffff !important;
+  padding: 9px 22px !important;
+  border-radius: 22px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  z-index: 2147483647 !important;
+  opacity: 0 !important;
+  transition: opacity 0.25s ease, transform 0.25s ease !important;
+  pointer-events: none !important;
+  max-width: 80vw !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  font-family: 'Segoe UI', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
+}
+
+#ffa-toast.ffa-toast-show {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+
+#ffa-toast.ffa-toast-error {
+  background: rgba(168, 40, 40, 0.92) !important;
+}
+
+/* ── 图标按钮激活状态 ─────────────────────────────────────── */
+
+.ffa-icon-btn.ffa-icon-active {
+  background: #2f9e6f !important;
+  color: #fff !important;
+  border-color: #2f9e6f !important;
+}
+
+/* ── 通用辅助 ────────────────────────────────────────────── */
+
+.ffa-block-btn {
+  width: 100% !important;
+  margin-top: 6px !important;
+}
+
+/* ── 搜索栏 ───────────────────────────────────────────────── */
+
+.ffa-search-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-bottom: 10px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background: rgba(237, 247, 242, 0.95) !important;
+  backdrop-filter: blur(8px) !important;
+  padding: 4px 0 6px !important;
+}
+
+.ffa-search-input {
+  flex: 1 !important;
+  padding: 7px 10px !important;
+  border: 1.5px solid #c0d8cc !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  color: #1a3a28 !important;
+  background: rgba(255,255,255,0.9) !important;
+  font-family: inherit !important;
+  outline: none !important;
+  transition: border-color 0.15s !important;
+}
+
+.ffa-search-input:focus {
+  border-color: #2f9e6f !important;
+  background: #fff !important;
+}
+
+.ffa-search-input::placeholder { color: #a0c4b4 !important; }
+
+.ffa-search-clear {
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  background: #ddd !important;
+  border: none !important;
+  border-radius: 50% !important;
+  font-size: 13px !important;
+  color: #666 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+}
+
+.ffa-search-clear:hover { background: #bbb !important; }
+
+/* ── 轮廓按钮（设置页用） ─────────────────────────────────── */
+
+.ffa-outline-btn {
+  background: transparent !important;
+  color: #2f9e6f !important;
+  border: 1.5px solid #a8ccbc !important;
+  padding: 8px 0 !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: background 0.15s !important;
+  text-align: center !important;
+}
+
+.ffa-outline-btn:hover {
+  background: rgba(47,158,111,0.08) !important;
+  border-color: #2f9e6f !important;
+}
+
+/* ── 引导页 ───────────────────────────────────────────────── */
+
+.ffa-onboard {
+  padding: 8px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.ffa-onboard-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #1a5c3a !important;
+  margin: 0 !important;
+}
+
+.ffa-onboard-desc {
+  font-size: 12px !important;
+  color: #72a98a !important;
+  margin: 0 0 4px !important;
+}
+
+.ffa-onboard-divider {
+  text-align: center !important;
+  font-size: 12px !important;
+  color: #aaa !important;
+  margin: 6px 0 !important;
+  letter-spacing: 2px !important;
+}
+
+.ffa-onboard-manual-btn {
+  width: 100% !important;
+  background: rgba(255,255,255,0.85) !important;
+  color: #1a5c3a !important;
+  border: 1.5px solid #c0d8cc !important;
+  padding: 10px 0 !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: background 0.15s !important;
+}
+
+.ffa-onboard-manual-btn:hover {
+  background: #e4f5ec !important;
+  border-color: #2f9e6f !important;
+}
+
+/* ── 设置页 ───────────────────────────────────────────────── */
+
+.ffa-settings {
+  padding: 4px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.ffa-back-btn {
+  align-self: flex-start !important;
+  background: transparent !important;
+  color: #2f9e6f !important;
+  border: none !important;
+  padding: 2px 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+}
+
+.ffa-back-btn:hover { text-decoration: underline !important; }
+
+.ffa-settings-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #555 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin: 4px 0 4px !important;
+}
+
+.ffa-settings-note {
+  font-size: 11px !important;
+  color: #aaa !important;
+  margin: 2px 0 0 !important;
+  line-height: 1.4 !important;
+}
+
+.ffa-danger-label { color: #c0392b !important; }
+
+.ffa-danger-btn {
+  width: 100% !important;
+  background: transparent !important;
+  color: #c0392b !important;
+  border: 1.5px solid rgba(192,57,43,0.4) !important;
+  padding: 8px 0 !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: all 0.15s !important;
+}
+
+.ffa-danger-btn:hover { background: rgba(192,57,43,0.07) !important; }
+
+.ffa-danger-btn.ffa-danger-confirm {
+  background: #c0392b !important;
+  color: #fff !important;
+}
+
+/* ── 编辑模式 ─────────────────────────────────────────────── */
+
+/* 编辑模式激活时侧边栏轻微背景变化 */
+#ffa-sidebar.ffa-edit-active .ffa-body {
+  background: rgba(255,250,235,0.6) !important;
+}
+
+/* 编辑完成按钮宽度自适应 */
+.ffa-icon-btn.ffa-icon-active {
+  font-size: 11px !important;
+  padding: 0 6px !important;
+  border-radius: 10px !important;
+  width: auto !important;
+}
+
+/* 分组标题可编辑状态 */
+.ffa-group-title.ffa-title-editable {
+  cursor: text !important;
+  border-bottom: 1px dashed rgba(47,158,111,0.5) !important;
+  outline: none !important;
+}
+
+.ffa-group-title.ffa-title-editable:focus {
+  background: rgba(47,158,111,0.08) !important;
+  border-radius: 4px !important;
+  padding: 1px 4px !important;
+}
+
+/* 编辑行 */
+.ffa-edit-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 2px !important;
+  border-radius: 6px !important;
+  transition: background 0.15s !important;
+}
+
+.ffa-edit-row:hover {
+  background: rgba(47,158,111,0.07) !important;
+}
+
+.ffa-edit-label {
+  flex: 1 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #1a3a28 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ffa-del-btn {
+  color: #c0392b !important;
+  border-color: rgba(192,57,43,0.3) !important;
+}
+
+.ffa-del-btn:hover {
+  background: rgba(192,57,43,0.1) !important;
+}
+
+/* 内联编辑表单 */
+.ffa-edit-form {
+  background: rgba(255,255,255,0.97) !important;
+  border: 1px solid #a8ccbc !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+  margin: 4px 0 6px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+}
+
+.ffa-form-input {
+  width: 100% !important;
+  padding: 6px 9px !important;
+  border: 1.5px solid #c8ddd4 !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #1a3a28 !important;
+  font-family: inherit !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+}
+
+.ffa-form-input:focus {
+  border-color: #2f9e6f !important;
+}
+
+.ffa-form-textarea {
+  width: 100% !important;
+  min-height: 80px !important;
+  padding: 6px 9px !important;
+  border: 1.5px solid #c8ddd4 !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  color: #333 !important;
+  font-family: inherit !important;
+  resize: vertical !important;
+  outline: none !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+}
+
+.ffa-form-textarea:focus {
+  border-color: #2f9e6f !important;
+}
+
+.ffa-form-actions {
+  display: flex !important;
+  gap: 6px !important;
+  justify-content: flex-end !important;
+}
+
+.ffa-form-save {
+  background: #2f9e6f !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 5px 14px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+}
+
+.ffa-form-save:hover {
+  background: #1a6b4a !important;
+}
+
+.ffa-form-cancel {
+  background: transparent !important;
+  color: #888 !important;
+  border: 1px solid #ddd !important;
+  padding: 5px 10px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+}
+
+.ffa-form-cancel:hover {
+  background: #f5f5f5 !important;
+}
+
+/* 添加条目按钮 */
+.ffa-add-entry-btn {
+  width: 100% !important;
+  background: transparent !important;
+  color: #2f9e6f !important;
+  border: 1.5px dashed #88c5a8 !important;
+  padding: 5px 0 !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin-top: 4px !important;
+  font-family: inherit !important;
+  transition: background 0.15s !important;
+}
+
+.ffa-add-entry-btn:hover {
+  background: rgba(47,158,111,0.08) !important;
+  border-color: #2f9e6f !important;
+}
+
+/* 新建分组按钮 */
+.ffa-add-group-btn {
+  width: 100% !important;
+  background: rgba(47,158,111,0.08) !important;
+  color: #1a5c3a !important;
+  border: 1.5px dashed #2f9e6f !important;
+  padding: 8px 0 !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  margin-top: 8px !important;
+  font-family: inherit !important;
+  transition: background 0.15s !important;
+}
+
+.ffa-add-group-btn:hover {
+  background: rgba(47,158,111,0.15) !important;
+}
