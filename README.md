@@ -32,8 +32,8 @@ On first launch, choose one of two modes:
 
 ```json
 [
-  { "title": "基本信息", "buttonText": "姓名",  "fillContent": "顾杰" },
-  { "title": "基本信息", "buttonText": "邮箱",  "fillContent": "gujie_kris@163.com" },
+  { "title": "基本信息", "buttonText": "姓名",  "fillContent": "YOUR_NAME" },
+  { "title": "基本信息", "buttonText": "邮箱",  "fillContent": "YOUR_EMAIL" },
   { "title": "Momenta",  "buttonText": "工作内容", "fillContent": "1. 搭建AI询价系统..." }
 ]
 ```

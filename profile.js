@@ -1,19 +1,19 @@
 /**
- * profile.js — 顾杰的网申数据
+ * profile.js — 网申数据（请替换为你的个人信息）
  * 修改此文件即可更新所有信息，无需重新打包
  */
 window.__FFA_PROFILE__ = {
-  name: '顾杰',
+  name: 'YOUR_NAME',
   orderedData: [
 
     // ── 基本信息 ──────────────────────────────────────────
-    { title: '基本信息', buttonText: '姓名',    fillContent: '顾杰' },
-    { title: '基本信息', buttonText: '英文名',  fillContent: 'Kris Gu' },
-    { title: '基本信息', buttonText: '邮箱',    fillContent: 'gujie_kris@163.com' },
-    { title: '基本信息', buttonText: '手机',    fillContent: '19292244363' },
-    { title: '基本信息', buttonText: '性别',    fillContent: '男' },
-    { title: '基本信息', buttonText: 'GitHub',  fillContent: 'https://github.com/gu1209' },
-    { title: '基本信息', buttonText: '个人主页',fillContent: 'https://gu1209.github.io' },
+    { title: '基本信息', buttonText: '姓名',    fillContent: 'YOUR_NAME' },
+    { title: '基本信息', buttonText: '英文名',  fillContent: 'YOUR_ENGLISH_NAME' },
+    { title: '基本信息', buttonText: '邮箱',    fillContent: 'YOUR_EMAIL' },
+    { title: '基本信息', buttonText: '手机',    fillContent: 'YOUR_PHONE' },
+    { title: '基本信息', buttonText: '性别',    fillContent: 'YOUR_GENDER' },
+    { title: '基本信息', buttonText: 'GitHub',  fillContent: 'YOUR_GITHUB_URL' },
+    { title: '基本信息', buttonText: '个人主页',fillContent: 'YOUR_HOMEPAGE_URL' },
 
     // ── 教育背景：硕士 ─────────────────────────────────────
     { title: '研究生教育', buttonText: '学校',   fillContent: '天津大学' },
