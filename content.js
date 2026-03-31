@@ -317,6 +317,23 @@ class FormFillAssistant {
       if (el) this.lastInput = el;
     };
     document.addEventListener('click', this._clickCapture, true);
+
+    // 聚焦时触发自动填写 / 建议
+    document.addEventListener('focusin', e => {
+      if (this.sidebar?.contains(e.target)) return;
+      const target = e.target.closest('input:not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]),textarea,select,[contenteditable="true"],[role="textbox"]');
+      if (!target) return;
+      this.lastInput = target;
+      clearTimeout(this._sugHideTimer);
+      this._onFieldFocus(target);
+    }, true);
+
+    document.addEventListener('focusout', e => {
+      if (this.sidebar?.contains(e.target)) return;
+      this._sugHideTimer = setTimeout(() => {
+        if (!document.getElementById('ffa-suggestion')?.matches(':hover')) this._hideSuggestion();
+      }, 180);
+    }, true);
   }
 
   // ── 引导页 ─────────────────────────────────────────────────
@@ -433,7 +450,7 @@ class FormFillAssistant {
     const data = this.profile?.orderedData;
     if (!data?.length) { this._showToast('暂无数据可导出', true); return; }
     const json = JSON.stringify(
-      data.map(({ title, buttonText, fillContent }) => ({ title, buttonText, fillContent })),
+      data.map(({ title, buttonText, fillContent, aliases }) => ({ title, buttonText, fillContent, ...(aliases?.length ? { aliases } : {}) })),
       null, 2
     );
     const a = document.createElement('a');
@@ -452,7 +469,11 @@ class FormFillAssistant {
         if (!Array.isArray(parsed)) throw new Error('格式应为数组');
         const orderedData = parsed
           .filter(item => item.title && item.buttonText)
-          .map((item, i) => ({ title: String(item.title).trim(), buttonText: String(item.buttonText).trim(), fillContent: item.fillContent != null ? String(item.fillContent) : '', order: i }));
+          .map((item, i) => ({
+            title: String(item.title).trim(), buttonText: String(item.buttonText).trim(),
+            fillContent: item.fillContent != null ? String(item.fillContent) : '', order: i,
+            ...(Array.isArray(item.aliases) && item.aliases.length ? { aliases: item.aliases.map(a => String(a).trim()).filter(Boolean) } : {}),
+          }));
         if (!orderedData.length) throw new Error('没有找到有效条目');
         this.profile = { name: this.profile?.name ?? '我', orderedData, fetchedAt: this.profile?.fetchedAt ?? Date.now(), modified: true };
         this._saveData();
@@ -570,7 +591,9 @@ class FormFillAssistant {
     editBtn.addEventListener('click', () => this._toggleEditForm(item, row));
     const delBtn = el('button', 'ffa-icon-btn ffa-del-btn', '×'); delBtn.title = '删除';
     delBtn.addEventListener('click', () => this._deleteEntry(item));
-    row.append(label, editBtn, delBtn); return row;
+    row.append(label);
+    if (item.aliases?.length) { const tag = el('span', 'ffa-alias-tag', `@${item.aliases.length}`); tag.title = '别名：' + item.aliases.join('、'); row.appendChild(tag); }
+    row.append(editBtn, delBtn); return row;
   }
 
   _toggleEditForm(item, row) {
@@ -581,17 +604,25 @@ class FormFillAssistant {
     const form = document.createElement('div'); form.className = 'ffa-edit-form';
     const nameInput = document.createElement('input');
     nameInput.type = 'text'; nameInput.className = 'ffa-form-input'; nameInput.placeholder = '按钮名称'; nameInput.value = item.buttonText;
+    const aliasInput = document.createElement('input');
+    aliasInput.type = 'text'; aliasInput.className = 'ffa-form-input ffa-alias-input';
+    aliasInput.placeholder = '别名（逗号分隔，用于自动识别字段，如：名字,全名）';
+    aliasInput.value = item.aliases?.join('、') || '';
     const contentArea = document.createElement('textarea');
     contentArea.className = 'ffa-form-textarea'; contentArea.placeholder = '填写内容'; contentArea.value = item.fillContent;
 
     const actions = document.createElement('div'); actions.className = 'ffa-form-actions';
     const saveBtn = el('button', 'ffa-form-save', '保存');
-    saveBtn.addEventListener('click', () => { const nt = nameInput.value.trim(); if (!nt) { nameInput.focus(); return; } this._updateEntry(item, nt, contentArea.value); form.remove(); });
+    saveBtn.addEventListener('click', () => {
+      const nt = nameInput.value.trim(); if (!nt) { nameInput.focus(); return; }
+      const aliases = aliasInput.value.split(/[,，、]/).map(s => s.trim()).filter(Boolean);
+      this._updateEntry(item, nt, contentArea.value, aliases); form.remove();
+    });
     const cancelBtn = el('button', 'ffa-form-cancel', '取消');
     cancelBtn.addEventListener('click', () => form.remove());
-    [nameInput, contentArea].forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) saveBtn.click(); }));
+    [nameInput, aliasInput, contentArea].forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) saveBtn.click(); }));
 
-    actions.append(saveBtn, cancelBtn); form.append(nameInput, contentArea, actions);
+    actions.append(saveBtn, cancelBtn); form.append(nameInput, aliasInput, contentArea, actions);
     row.insertAdjacentElement('afterend', form); nameInput.focus(); nameInput.select();
   }
 
@@ -602,9 +633,11 @@ class FormFillAssistant {
     this._setStatus(`上次同步：${this._timeAgo(this.profile.fetchedAt)} · 已修改`);
   }
 
-  _updateEntry(item, text, content) {
+  _updateEntry(item, text, content, aliases = []) {
     const e = this.profile.orderedData.find(d => d.order === item.order); if (!e) return;
-    e.buttonText = text; e.fillContent = content; this._markModified(); this._renderButtons();
+    e.buttonText = text; e.fillContent = content;
+    if (aliases.length) e.aliases = aliases; else delete e.aliases;
+    this._markModified(); this._renderButtons();
   }
   _deleteEntry(item)           { this.profile.orderedData = this.profile.orderedData.filter(d => d.order !== item.order); this._markModified(); this._renderButtons(); }
   _renameGroup(old_, new_)     { for (const i of this.profile.orderedData) if (i.title === old_) i.title = new_; this._markModified(); }
@@ -627,6 +660,115 @@ class FormFillAssistant {
         a.matches('input:not([type=file]):not([type=button]):not([type=submit]):not([type=reset]),textarea,select,[contenteditable="true"],[role="textbox"]')) return a;
     if (this.lastInput && document.contains(this.lastInput)) return this.lastInput;
     return null;
+  }
+
+  // ── 字段识别与智能建议 ──────────────────────────────────────
+
+  _getFieldLabel(el) {
+    const aria = el.getAttribute('aria-label')?.trim();
+    if (aria) return aria;
+    const labelledBy = el.getAttribute('aria-labelledby');
+    if (labelledBy) { const t = document.getElementById(labelledBy)?.textContent?.trim(); if (t) return t; }
+    if (el.id) {
+      try { const lbl = document.querySelector(`label[for="${CSS.escape(el.id)}"]`); if (lbl?.textContent?.trim()) return lbl.textContent.trim(); } catch {}
+    }
+    const parentLabel = el.closest('label');
+    if (parentLabel) {
+      const clone = parentLabel.cloneNode(true);
+      clone.querySelectorAll('input,textarea,select').forEach(i => i.remove());
+      const t = clone.textContent.trim(); if (t) return t;
+    }
+    const ph = el.placeholder?.trim(); if (ph) return ph;
+    return el.name?.trim() || el.id?.trim() || '';
+  }
+
+  _normalizeLabel(s) {
+    return s.replace(/[请输入您的你的（()）\s:：*【】「」]/g, '').toLowerCase();
+  }
+
+  _matchScore(fieldLabel, entryText) {
+    const a = this._normalizeLabel(fieldLabel);
+    const b = this._normalizeLabel(entryText);
+    if (!a || !b) return 0;
+    if (a === b) return 1;
+    if (a.includes(b) || b.includes(a)) return 0.85;
+    const sa = new Set(a), sb = new Set(b);
+    let common = 0; for (const c of sa) if (sb.has(c)) common++;
+    return (common / Math.max(sa.size, sb.size)) * 0.5;
+  }
+
+  _findExactMatch(label) {
+    if (!label || !this.profile?.orderedData) return null;
+    const norm = this._normalizeLabel(label);
+    return this.profile.orderedData.find(item => {
+      if (this._normalizeLabel(item.buttonText) === norm) return true;
+      return item.aliases?.some(a => this._normalizeLabel(a) === norm);
+    }) ?? null;
+  }
+
+  _findBestMatch(label) {
+    if (!label || !this.profile?.orderedData) return null;
+    let best = null, bestScore = 0;
+    for (const item of this.profile.orderedData) {
+      if (!item.fillContent) continue;
+      for (const t of [item.buttonText, ...(item.aliases || [])]) {
+        const score = this._matchScore(label, t);
+        if (score > bestScore) { bestScore = score; best = item; }
+      }
+    }
+    return bestScore >= 0.5 ? best : null;
+  }
+
+  _onFieldFocus(el) {
+    const label = this._getFieldLabel(el);
+    if (!label) { this._hideSuggestion(); this._highlightSidebarBtn(null); return; }
+    // Feature 1：空字段且完全匹配 → 直接填写
+    const empty = !(el.tagName === 'SELECT' ? el.value : (el.value || el.textContent?.trim() || ''));
+    if (empty) {
+      const exact = this._findExactMatch(label);
+      if (exact) {
+        this._hideSuggestion();
+        this._highlightSidebarBtn(exact);
+        this._fillInput(exact.fillContent);
+        return;
+      }
+    }
+    // Feature 2：最佳匹配 → 显示建议浮层 + 高亮侧边栏按钮
+    const best = this._findBestMatch(label);
+    if (best) { this._showSuggestion(el, best); this._highlightSidebarBtn(best); }
+    else { this._hideSuggestion(); this._highlightSidebarBtn(null); }
+  }
+
+  _showSuggestion(fieldEl, item) {
+    this._hideSuggestion();
+    if (fieldEl.tagName === 'SELECT') return; // SELECT 有原生下拉，不叠加
+    const rect = fieldEl.getBoundingClientRect();
+    const preview = item.fillContent.length > 38 ? item.fillContent.slice(0, 38) + '…' : item.fillContent;
+    const tip = document.createElement('div'); tip.id = 'ffa-suggestion';
+    const lbl  = document.createElement('span'); lbl.className = 'ffa-sug-label'; lbl.innerHTML = `💡 <b>${item.buttonText}</b>`;
+    const prev = document.createElement('span'); prev.className = 'ffa-sug-preview'; prev.textContent = preview;
+    const fill = document.createElement('button'); fill.className = 'ffa-sug-fill'; fill.textContent = '填入↵';
+    const cls  = document.createElement('button'); cls.className = 'ffa-sug-close'; cls.textContent = '×';
+    tip.append(lbl, prev, fill, cls);
+    const top  = rect.bottom + window.scrollY + 5;
+    const left = Math.max(4, Math.min(rect.left + window.scrollX, window.innerWidth - 330));
+    tip.style.cssText = `position:absolute;top:${top}px;left:${left}px;z-index:2147483645;`;
+    fill.addEventListener('mousedown', e => {
+      e.preventDefault(); clearTimeout(this._sugHideTimer);
+      this._fillInput(item.fillContent); this._hideSuggestion();
+    });
+    cls.addEventListener('mousedown', e => { e.preventDefault(); this._hideSuggestion(); });
+    document.body.appendChild(tip);
+  }
+
+  _hideSuggestion() { document.getElementById('ffa-suggestion')?.remove(); }
+
+  _highlightSidebarBtn(item) {
+    document.querySelectorAll('#ffa-buttons .ffa-btn.ffa-btn-match').forEach(b => b.classList.remove('ffa-btn-match'));
+    if (!item) return;
+    for (const btn of document.querySelectorAll('#ffa-buttons .ffa-btn')) {
+      if (btn.textContent === item.buttonText) { btn.classList.add('ffa-btn-match'); btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); break; }
+    }
   }
 
   _fillInput(content) {

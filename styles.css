@@ -635,6 +635,113 @@
   border-color: #2f9e6f !important;
 }
 
+/* ── 智能建议浮层 ─────────────────────────────────────────── */
+
+#ffa-suggestion {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: rgba(20, 72, 46, 0.96) !important;
+  color: #fff !important;
+  padding: 7px 10px !important;
+  border-radius: 10px !important;
+  font-size: 12px !important;
+  max-width: 340px !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.22) !important;
+  font-family: 'Segoe UI', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif !important;
+  animation: ffa-fadein 0.15s ease !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+@keyframes ffa-fadein {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ffa-sug-label {
+  font-weight: 700 !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
+
+.ffa-sug-preview {
+  color: rgba(255,255,255,0.68) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.ffa-sug-fill {
+  background: rgba(255,255,255,0.18) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.38) !important;
+  padding: 3px 9px !important;
+  border-radius: 6px !important;
+  font-size: 11px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  transition: background 0.12s !important;
+}
+
+.ffa-sug-fill:hover { background: rgba(255,255,255,0.32) !important; }
+
+.ffa-sug-close {
+  background: transparent !important;
+  color: rgba(255,255,255,0.5) !important;
+  border: none !important;
+  padding: 0 2px !important;
+  font-size: 15px !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  font-family: inherit !important;
+  flex-shrink: 0 !important;
+}
+
+.ffa-sug-close:hover { color: #fff !important; }
+
+/* ── 侧边栏按钮匹配高亮 ──────────────────────────────────── */
+
+.ffa-btn.ffa-btn-match {
+  background: #d8f3e7 !important;
+  border-color: #2f9e6f !important;
+  animation: ffa-pulse 1.6s ease infinite !important;
+}
+
+@keyframes ffa-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(47,158,111,0.22) !important; }
+  50%       { box-shadow: 0 0 0 5px rgba(47,158,111,0.40) !important; }
+}
+
+/* ── 别名标签（编辑行） ───────────────────────────────────── */
+
+.ffa-alias-tag {
+  font-size: 10px !important;
+  color: #2f9e6f !important;
+  background: rgba(47,158,111,0.12) !important;
+  border: 1px solid rgba(47,158,111,0.3) !important;
+  border-radius: 4px !important;
+  padding: 1px 5px !important;
+  flex-shrink: 0 !important;
+  cursor: default !important;
+  white-space: nowrap !important;
+}
+
+/* ── 别名输入框（编辑表单） ──────────────────────────────── */
+
+.ffa-alias-input {
+  font-weight: 400 !important;
+  color: #555 !important;
+  font-size: 11px !important;
+  border-style: dashed !important;
+}
+
+.ffa-alias-input:focus { border-style: solid !important; }
+.ffa-alias-input::placeholder { color: #b0c4b8 !important; font-size: 11px !important; }
+
 /* 新建分组按钮 */
 .ffa-add-group-btn {
   width: 100% !important;
