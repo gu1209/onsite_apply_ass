@@ -121,8 +121,74 @@ class FormFillAssistant {
       this.profile = cached;
       this._renderButtons();
       this._setStatus(`上次同步：${this._timeAgo(cached.fetchedAt)}${cached.modified ? ' · 已修改' : ''}`);
+      this._autoFillAll();
     }
     if (settings?.sourceUrl && !cached) await this._fetchAndApply(settings.sourceUrl);
+
+    this._bindDomObserver();
+  }
+
+  // ── 页面加载后批量自动填写完全匹配的空字段 ────────────────────
+
+  _autoFillAll(root = document) {
+    if (!this.profile?.orderedData) return;
+    const selector = 'input:not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]),textarea,select,[contenteditable="true"],[role="textbox"]';
+    for (const el of root.querySelectorAll(selector)) {
+      if (this.sidebar?.contains(el)) continue;
+      const empty = !(el.tagName === 'SELECT' ? el.value : (el.value || el.textContent?.trim() || ''));
+      if (!empty) continue;
+      const label = this._getFieldLabel(el);
+      if (!label) continue;
+      const exact = this._findExactMatch(label);
+      if (exact) this._fillInputEl(el, exact.fillContent);
+    }
+  }
+
+  // ── MutationObserver：监听 SPA 动态插入的新表单 ───────────────
+
+  _bindDomObserver() {
+    if (this._domObserver) return;
+    this._domObserver = new MutationObserver(mutations => {
+      if (!this.profile?.orderedData) return;
+      for (const m of mutations) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType !== 1) continue;
+          // 新节点本身是输入框
+          const selector = 'input:not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]),textarea,select,[contenteditable="true"],[role="textbox"]';
+          if (node.matches?.(selector)) {
+            if (!this.sidebar?.contains(node)) {
+              const empty = !(node.tagName === 'SELECT' ? node.value : (node.value || node.textContent?.trim() || ''));
+              if (empty) {
+                const label = this._getFieldLabel(node);
+                const exact = label ? this._findExactMatch(label) : null;
+                if (exact) this._fillInputEl(node, exact.fillContent);
+              }
+            }
+          }
+          // 新节点包含输入框
+          if (node.querySelectorAll) this._autoFillAll(node);
+        }
+      }
+    });
+    this._domObserver.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // ── 直接填写指定元素（不依赖 lastInput / activeElement）────────
+
+  _fillInputEl(el, content) {
+    if (el.tagName === 'SELECT') {
+      const o = Array.from(el.options).find(o => o.text.includes(content) || o.value === content);
+      if (o) { el.value = o.value; el.dispatchEvent(new Event('change', { bubbles: true })); }
+      return;
+    }
+    if (el.contentEditable === 'true' || el.getAttribute('role') === 'textbox') {
+      el.textContent = content; el.dispatchEvent(new InputEvent('input', { bubbles: true })); return;
+    }
+    const proto  = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+    if (setter) setter.call(el, content); else el.value = content;
+    el.dispatchEvent(new InputEvent('input',  { bubbles: true, inputType: 'insertText', data: content }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   // ── 键盘快捷键 Alt+Q ───────────────────────────────────────
@@ -150,6 +216,8 @@ class FormFillAssistant {
       await this._saveData();
       this._renderButtons();
       this._setStatus('已同步 · 刚刚');
+      this._autoFillAll();
+      this._bindDomObserver();
     } catch (err) {
       console.error('[OAA] 同步失败:', err.message);
       this._setStatus(this.profile ? '同步失败 · 使用已保存数据' : '获取失败，请检查网址');
@@ -729,7 +797,7 @@ class FormFillAssistant {
       if (exact) {
         this._hideSuggestion();
         this._highlightSidebarBtn(exact);
-        this._fillInput(exact.fillContent);
+        this._fillInputEl(el, exact.fillContent);
         return;
       }
     }
